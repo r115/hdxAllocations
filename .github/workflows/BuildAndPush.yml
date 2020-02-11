@@ -14,9 +14,9 @@ jobs:
       - name: npm test
         run: npm run test:unit
       - name: npm lint
-        run: npm lint
+        run: npm run lint
       - name: npm build
-        run: npm build
+        run: npm run build
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
