@@ -6,24 +6,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+
       - uses: actions/setup-node@v1
         with:
           node-version: '10.x'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: npm install
         run: npm install
+
       - name: npm test
         run: npm run test:unit
+
       - name: npm lint
         run: npm run lint
+
       - name: npm build
         run: npm run build
+
       - name: Deploy to S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl public-read --follow-symlinks --delete
-        env:
-            AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            AWS_REGION: 'us-east-2'
-            SOURCE_DIR: 'dist'
+        run: aws s3 sync ./dist/ s3://${{ secrets.AWS_S3_BUCKET }} --delete
