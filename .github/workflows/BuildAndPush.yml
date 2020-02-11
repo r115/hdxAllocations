@@ -6,18 +6,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
       - name: npm install
-        uses: actions/npm@master
-        with:
-          args: install
+        run: npm install
       - name: npm test
-        uses: actions/npm@master
-        with:
-          args: run test:unit
+        run: npm run test:unit
       - name: npm lint
-        uses: actions/npm@master
-        with:
-          args: run lint
+        run: npm lint
+      - name: npm build
+        run: npm build
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
